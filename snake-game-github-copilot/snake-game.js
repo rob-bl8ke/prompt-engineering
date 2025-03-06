@@ -35,11 +35,11 @@ function gameLoop() {
 function update() {
     let head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-    // Wrap around the screen
-    if (head.x < 0) head.x = tileCount - 1;
-    if (head.x >= tileCount) head.x = 0;
-    if (head.y < 0) head.y = tileCount - 1;
-    if (head.y >= tileCount) head.y = 0;
+    // Check for boundary collision
+    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+        clearInterval(gameInterval);
+        return;
+    }
 
     // Check for collision with itself
     if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
