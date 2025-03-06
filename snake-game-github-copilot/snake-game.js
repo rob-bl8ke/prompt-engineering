@@ -38,7 +38,10 @@ function gameLoop() {
 function update() {
     let head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-    // Check for boundary collision
+    // Add new head to the snake
+    snake.unshift(head);
+
+    // Check for boundary collision after updating the snake's position
     if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
         clearInterval(gameInterval);
         gameOver = true;
@@ -46,14 +49,11 @@ function update() {
     }
 
     // Check for collision with itself
-    if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+    if (snake.some((segment, index) => index !== 0 && segment.x === head.x && segment.y === head.y)) {
         clearInterval(gameInterval);
         gameOver = true;
         return;
     }
-
-    // Add new head to the snake
-    snake.unshift(head);
 
     // Check for food collision
     if (head.x === food.x && head.y === food.y) {
