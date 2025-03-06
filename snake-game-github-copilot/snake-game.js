@@ -15,6 +15,7 @@ let score = 0;
 let highScore = 0;
 let speed = 150;
 let gameInterval;
+let gameOver = false;
 
 // Input Handling
 document.addEventListener("keydown", (e) => {
@@ -27,8 +28,10 @@ document.addEventListener("keydown", (e) => {
 
 // Game Loop
 function gameLoop() {
-    update();
-    draw();
+    if (!gameOver) {
+        update();
+        draw();
+    }
 }
 
 // Update Game State
@@ -38,12 +41,14 @@ function update() {
     // Check for boundary collision
     if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
         clearInterval(gameInterval);
+        gameOver = true;
         return;
     }
 
     // Check for collision with itself
     if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
         clearInterval(gameInterval);
+        gameOver = true;
         return;
     }
 
@@ -95,6 +100,24 @@ function draw() {
     ctx.font = "20px Arial";
     ctx.fillText(`Score: ${score}`, 10, 20);
     ctx.fillText(`High Score: ${highScore}`, 10, 40);
+
+    // Draw Game Over overlay if game is over
+    if (gameOver) {
+        drawGameOver();
+    }
+}
+
+// Draw Game Over Overlay
+function drawGameOver() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white";
+    ctx.font = "50px Arial";
+    ctx.fillText("Game Over", canvas.width / 2 - 150, canvas.height / 2 - 25);
+
+    ctx.font = "20px Arial";
+    ctx.fillText("Press Enter to Restart", canvas.width / 2 - 100, canvas.height / 2 + 25);
 }
 
 // Restart Game
@@ -103,6 +126,7 @@ function restartGame() {
     direction = { x: 1, y: 0 };
     score = 0;
     speed = 150;
+    gameOver = false;
     clearInterval(gameInterval);
     gameInterval = setInterval(gameLoop, speed);
 }
